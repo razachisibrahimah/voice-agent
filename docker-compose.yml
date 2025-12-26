@@ -1,0 +1,61 @@
+services:
+
+  # ==========================
+  # Traefik Reverse Proxy
+  # ==========================
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik-dev
+
+    # Tell Traefik to use the static config file
+    command:
+      - "--configFile=/traefik.yml"
+
+    # Expose Traefik ports to host
+    ports:
+      - "80:80"        # HTTP entrypoint
+      - "8080:8080"    # Traefik dashboard (DEV ONLY)
+
+    # Volumes required for Docker provider
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro  # Read Docker labels
+      - ./traefik.yml:/traefik.yml:ro                  # Static Traefik config
+
+    restart: unless-stopped
+
+
+  # ==========================
+  # Voice Agent Application
+  # ==========================
+  voice-agent:
+    build:
+      context: .               # Project root
+      dockerfile: Dockerfile.dev
+
+    container_name: voice-agent-dev
+
+    # Load environment variables (Deepgram key, PORT, etc.)
+    env_file:
+      - .env
+
+    # Mount project directory for live reload
+    volumes:
+      - .:/app                 # Sync local code into container
+      - /app/node_modules      # Prevent host node_modules overwrite
+
+    restart: unless-stopped
+
+    # ==========================
+    # Traefik Routing Labels
+    # ==========================
+    labels:
+      - "traefik.enable=true"  # Explicitly expose to Traefik
+
+      # Route requests with Host=localhost
+      - "traefik.http.routers.voice-agent.rule=Host(`localhost`)"
+
+      # Use HTTP entrypoint
+      - "traefik.http.routers.voice-agent.entrypoints=web"
+
+      # Forward traffic to internal port 3000
+      - "traefik.http.services.voice-agent.loadbalancer.server.port=3000"

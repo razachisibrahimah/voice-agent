@@ -1,0 +1,14 @@
+# Define entrypoints (where Traefik listens)
+entryPoints:
+  web:
+    address: ":80"        # Traefik listens on port 80 for HTTP traffic
+
+# Enable Docker provider so Traefik can read container labels
+providers:
+  docker:
+    exposedByDefault: false  # Only route containers explicitly enabled via labels
+
+# Enable Traefik dashboard (DEV ONLY)
+api:
+  dashboard: true          # Enables web dashboard
+  insecure: true           # No auth, not for production
