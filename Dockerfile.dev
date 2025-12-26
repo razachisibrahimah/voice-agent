@@ -8,7 +8,6 @@ WORKDIR /app
 COPY package.json ./
 
 # Install all dependencies (dev + prod)
-# This matches local `npm install`
 RUN npm install
 
 # Copy TypeScript config

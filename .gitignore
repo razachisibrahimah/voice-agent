@@ -49,3 +49,11 @@ dist/
 
 # pycharm
 .idea
+
+# ==========================
+# Kubernetes secrets (REAL)
+# ==========================
+kubernetes/secret.yaml
+kubernetes/*.secret.yaml
+kubernetes/**/secret.yaml
+kubernetes/**/secrets.yaml
