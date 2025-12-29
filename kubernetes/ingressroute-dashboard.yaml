@@ -1,0 +1,14 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traefik-dashboard
+  namespace: voice-agent
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`dashboard.localhost`)
+      kind: Rule
+      services:
+        - name: api@internal
+          kind: TraefikService

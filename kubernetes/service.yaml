@@ -1,13 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: voice-agent
+  name: voice-agent-svc
   namespace: voice-agent
 spec:
-  type: ClusterIP
   selector:
     app: voice-agent
   ports:
-    - name: http
+    - protocol: TCP
       port: 80
       targetPort: 3000

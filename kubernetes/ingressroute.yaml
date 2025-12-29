@@ -1,0 +1,14 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: voice-agent
+  namespace: voice-agent
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`voice.localhost`)
+      kind: Rule
+      services:
+        - name: voice-agent-svc
+          port: 80
