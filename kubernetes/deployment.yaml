@@ -19,12 +19,10 @@ spec:
         app: voice-agent
     spec:
       terminationGracePeriodSeconds: 20 # allows your SIGTERM handler to run
-      imagePullSecrets:
-        - name: ghcr-secret
       containers:
         - name: voice-agent
-          image: ghcr.io/razachisibrahimah/voice-agent:dev
-          imagePullPolicy: Always
+          image: voice-agent:dev
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
               name: http

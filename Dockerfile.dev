@@ -1,25 +1,19 @@
-# Use lightweight Node.js base image
 FROM node:20-alpine
 
-# Set working directory inside container
 WORKDIR /app
 
-# Copy dependency manifest
+# Copy only package.json to install deps
 COPY package.json ./
 
-# Install all dependencies (dev + prod)
+# Install dependencies (generates package-lock.json)
 RUN npm install
 
-# Copy TypeScript config
-COPY tsconfig.json ./
+# Copy rest of the project
+# COPY tsconfig.json ./
+# COPY src ./src
+# COPY static ./static
+COPY . .
 
-# Copy source code
-COPY src ./src
-COPY static ./static
-
-# Expose application port (internal only)
 EXPOSE 3000
 
-# Run exactly like local development
-# This uses ts-node (npm start)
 CMD ["npm", "start"]
