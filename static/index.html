@@ -50,7 +50,7 @@
 
                 // Connect to WebSocket server
                 // socket = new WebSocket('ws://localhost:3000');
-               socket = new WebSocket('ws://voice.localhost/ws')
+               socket = new WebSocket('ws://voice-agent.localhost:8081/ws')
 
                 socket.onopen = () => {
                     isConnected = true;

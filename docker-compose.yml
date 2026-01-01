@@ -3,11 +3,12 @@ services:
     image: traefik:v3.6.5
     container_name: traefik-dev
     ports:
-      - "80:80"
-      - "8080:8080"
+      - "${TRAEFIK_HOST_PORT}:${TRAEFIK_CONTAINER_PORT}"                         # HTTP routing
+      - "${TRAEFIK_DASHBOARD_HOST_PORT}:${TRAEFIK_DASHBOARD_CONTAINER_PORT}"     # Dashboard
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "./traefik.yaml:/etc/traefik/traefik.yaml:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro" # Give Traefik access to Docker events (for dynamic service discovery)
+      - "./traefik.yaml:/etc/traefik/traefik.yaml:ro"  # Mount static Traefik configuration
+
     restart: unless-stopped
 
   voice-agent:
@@ -22,7 +23,8 @@ services:
       - /app/node_modules
     restart: unless-stopped
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.voice-agent.rule=Host(`voice.localhost`)"
-      - "traefik.http.routers.voice-agent.entrypoints=web"
-      - "traefik.http.services.voice-agent.loadbalancer.server.port=3000"
+      - "traefik.enable=true"                                                  # Enable Traefik reverse proxy for this container
+      - "traefik.http.routers.voice-agent.rule=Host(`voice-agent.localhost`)"  # Route requests with this host to the container
+      - "traefik.http.routers.voice-agent.entrypoints=web"                     # Use the `web` entryPoint (typically port 80)
+      - "traefik.http.services.voice-agent.loadbalancer.server.port=${VOICE_AGENT_INTERNAL_PORT}"  # Internal app port
+

@@ -181,9 +181,10 @@ wss.on('connection', async (ws) => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.VOICE_AGENT_INTERNAL_PORT || 3000;
 const serverInstance = server.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
+
 });
 
 // Graceful shutdown handler

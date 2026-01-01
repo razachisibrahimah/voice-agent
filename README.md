@@ -9,26 +9,16 @@ Start building interactive voice experiences with Deepgram's Voice Agent API usi
 ## Prerequisites
 
 Before you begin, ensure you have:
-- Node.js 18 or higher installed
-- npm (comes with Node.js)
 - A Deepgram API key (see below)
 - Audio files in supported formats (WAV, MP3, M4A, or FLAC)
 
 ## Quickstart
 
-Follow these steps to get started with this starter application.
+Follow these steps to get started with this Voice Agent using Docker
 
 ### Clone the repository
 
 Go to GitHub and [clone the repository](https://github.com/deepgram-starters/node-voice-agent).
-
-### Install dependencies
-
-Install the project dependencies:
-
-```bash
-npm install
-```
 
 ### Create a `.env` config file
 
@@ -38,18 +28,21 @@ Copy the code from `sample.env` and create a new file called `.env`. Paste in th
 DEEPGRAM_API_KEY=your_deepgram_api_key_here
 ```
 
-### Run the application
+### Run the application with Docker
 
-Start the server with:
+Make sure Docker is installed and running, then start the app:
 
 ```bash
-npm start
+docker compose up
 ```
+This will:
 
-Then open your browser and go to:
+Build the app container and a Traefik reverse proxy
+Serve the app at http://voice-agent.localhost:8081 (or whichever domain you configure)
+To access the app, open your browser and go to:
 
 ```
-http://localhost:3000
+http://voice-agent.localhost:8081
 ```
 
 - Allow microphone access when prompted.
@@ -59,21 +52,6 @@ http://localhost:3000
 ## Using Cursor & MDC Rules
 
 This application can be modify as needed by using the [app-requirements.mdc](.cursor/rules/app-requirements.mdc) file. This file allows you to specify various settings and parameters for the application in a structured format that can be use along with [Cursor's](https://www.cursor.com/) AI Powered Code Editor.
-
-### Using the `app-requirements.mdc` File
-
-1. Clone or Fork this repo.
-2. Modify the `app-requirements.mdc`
-3. Add the necessary configuration settings in the file.
-4. You can refer to the MDC file used to help build this starter application by reviewing  [app-requirements.mdc](.cursor/rules/app-requirements.mdc)
-
-## Testing
-
-Test the application with:
-
-```bash
-npm run test
-```
 
 ## Getting Help
 
