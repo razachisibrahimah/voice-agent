@@ -1,19 +1,18 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: traefik
-  namespace: voice-agent
+  name: traefik                           # Name of the Service
+  namespace: voice-agent                 # Namespace where the Service is deployed
 spec:
-  type: LoadBalancer
+  type: LoadBalancer                     # Exposes the Service externally using a LoadBalancer
   selector:
-    app.kubernetes.io/name: traefik
+    app.kubernetes.io/name: traefik      # Matches Pods with this label to forward traffic to
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 80
-      name: web
+      port: 80                           # External port (HTTP) that the LoadBalancer will expose
+      targetPort: 80                     # Internal port on the Traefik Pod to forward traffic to
+      name: web                          # Named port used in IngressRoute entryPoints (e.g., "web")
     - protocol: TCP
-      port: 443
-      targetPort: 443
-      name: websecure
-
+      port: 443                          # External port (HTTPS) exposed by the LoadBalancer
+      targetPort: 443                    # Internal HTTPS port on the Traefik Pod
+      name: websecure                    # Named port used in IngressRoute entryPoints (e.g., "websecure")

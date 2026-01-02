@@ -28,7 +28,7 @@ yarn-error.log*
 # local env files
 .env*.local
 .env
-
+secret.yaml
 # vercel
 .vercel
 
@@ -50,9 +50,7 @@ dist/
 # pycharm
 .idea
 
-# ==========================
-# Kubernetes secrets (REAL)
-# ==========================
+# Kubernetes secrets
 kubernetes/secret.yaml
 kubernetes/*.secret.yaml
 kubernetes/**/secret.yaml

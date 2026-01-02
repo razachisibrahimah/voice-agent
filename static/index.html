@@ -49,9 +49,11 @@
                 mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
 
                 // Connect to WebSocket server
-                // socket = new WebSocket('ws://localhost:3000');
-               socket = new WebSocket('ws://voice-agent.localhost:8081/ws')
+                const wsUrl = `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws`;
+                  console.log(`Server running on wsUrl: ${wsUrl}`);
 
+                socket = new WebSocket(wsUrl);
+                //    socket = new WebSocket('ws://voice-agent.localhost:8081/ws')
                 socket.onopen = () => {
                     isConnected = true;
                     startStreaming();
