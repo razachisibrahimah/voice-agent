@@ -4,21 +4,57 @@ metadata:
   name: voice-agent
   namespace: voice-agent
 spec:
-  replicas: 1
+  replicas: 3  # Run multiple pods for load balancing and zero-downtime updates
+
+  strategy:
+    type: RollingUpdate  # Use rolling updates for safe deployment
+    rollingUpdate:
+      maxUnavailable: 0  # Ensure at least all existing pods remain during rollout
+      maxSurge: 1         # Allow one extra pod temporarily during rollout
+
   selector:
     matchLabels:
-      app: voice-agent
+      app: voice-agent  # Selector to match pod labels
+
   template:
     metadata:
       labels:
-        app: voice-agent
+        app: voice-agent  # Pod label for service targeting and routing
+
     spec:
+      terminationGracePeriodSeconds: 180  # Allow 3 minutes for graceful shutdown (in-flight calls, etc.)
+
       containers:
         - name: voice-agent
-          image: razachis1/voice-agent:latest
-          imagePullPolicy: Always
+          image: razachis1/voice-agent:latest  # Latest image from your registry
+          imagePullPolicy: Always  # Always pull the latest image for each deployment
+
           ports:
-            - containerPort: 3000
+            - containerPort: 3000  # Expose app’s internal port
+
           envFrom:
             - secretRef:
-                name: voice-agent-secrets    
+                name: voice-agent-secrets  # Inject secrets (e.g. API keys)
+
+          # Use TCP readiness probe to check if port is open
+          # Avoids interference with long-lived WebSocket/audio traffic
+          readinessProbe:
+            tcpSocket:
+              port: 3000
+            initialDelaySeconds: 5  # Wait 5s before first check
+            periodSeconds: 10       # Check every 10s
+
+          #  Use TCP liveness probe to detect crashed pods
+          # Ensures pod is killed only if truly dead, not just slow
+          livenessProbe:
+            tcpSocket:
+              port: 3000
+            initialDelaySeconds: 15  # Wait 15s before first check
+            periodSeconds: 20        # Check every 20s
+
+          #  Graceful shutdown logic
+          # Gives app time to wrap up sessions before termination
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "sleep 60"]

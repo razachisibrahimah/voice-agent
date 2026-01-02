@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: traefik
-          image: traefik:v3.6.5
+          image: traefik:v3.6.6
           args:
             - "--configFile=/etc/traefik/traefik.yaml"
           ports:
@@ -30,10 +30,10 @@ spec:
               mountPath: /etc/traefik/traefik.yaml
               subPath: traefik.yaml
             - name: traefik-logs
-              mountPath: /var/log/traefik  # ✅ Mount for logging
+              mountPath: /var/log/traefik  # Mount for logging
       volumes:
         - name: traefik-config
           configMap:
             name: traefik-config
         - name: traefik-logs
-          emptyDir: {}  # ✅ Temporary in-memory storage for logs
+          emptyDir: {}  # Temporary in-memory storage for logs
