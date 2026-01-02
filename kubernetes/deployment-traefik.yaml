@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: traefik
+  namespace: voice-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: traefik
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: traefik
+    spec:
+      containers:
+        - name: traefik
+          image: traefik:v3.6.5
+          args:
+            - "--configFile=/etc/traefik/traefik.yaml"
+          ports:
+            - name: web
+              containerPort: 80
+            - name: websecure
+              containerPort: 443
+            - name: traefik
+              containerPort: 8080
+          volumeMounts:
+            - name: traefik-config
+              mountPath: /etc/traefik/traefik.yaml
+              subPath: traefik.yaml
+            - name: traefik-logs
+              mountPath: /var/log/traefik  # ✅ Mount for logging
+      volumes:
+        - name: traefik-config
+          configMap:
+            name: traefik-config
+        - name: traefik-logs
+          emptyDir: {}  # ✅ Temporary in-memory storage for logs

@@ -1,0 +1,37 @@
+# Enable Traefik dashboard on port 8080
+api:
+  dashboard: true
+  insecure: true
+
+# Enable access logs
+logs:
+  access:
+    enabled: true
+    fields:
+      general:
+        defaultMode: keep
+      headers:
+        defaultMode: keep
+    format: json
+
+# Enable Prometheus metrics
+metrics:
+  prometheus:
+    enabled: true
+    entryPoint: metrics
+    service:
+      enabled: true
+
+# Entry points (in case you want to customize)
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+  metrics:
+    address: ":9100"  # Optional Prometheus metrics entryPoint
+
+# Providers - ensure CRDs are enabled
+providers:
+  kubernetesCRD: {}
+  kubernetesIngress: {}

@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: traefik-config
+  namespace: voice-agent
+data:
+  traefik.yaml: |
+    log:
+      level: INFO
+
+    accessLog:
+      filePath: "/var/log/traefik/access.log"
+      bufferingSize: 0
+      filters:
+        statusCodes: ["200", "300-302", "400-499", "500-599"]
+      fields:
+        defaultMode: keep
+        names:
+          StartUTC: drop
+          ClientUsername: drop
+
+    entryPoints:
+      web:
+        address: ":80"
+      websecure:
+        address: ":443"
+
+    api:
+      dashboard: true
+
+    providers:
+      kubernetesCRD: {}
+      kubernetesIngress: {}
