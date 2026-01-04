@@ -5,13 +5,10 @@ WORKDIR /app
 # Copy only package.json to install deps
 COPY package.json ./
 
-# Install dependencies (generates package-lock.json)
-RUN npm install
+# Install dependencies and winston
+RUN npm install && \
+    npm install winston @types/winston --save
 
-# Copy rest of the project
-# COPY tsconfig.json ./
-# COPY src ./src
-# COPY static ./static
 COPY . .
 
 EXPOSE 3000
