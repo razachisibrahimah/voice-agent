@@ -55,3 +55,4 @@ kubernetes/secret.yaml
 kubernetes/*.secret.yaml
 kubernetes/**/secret.yaml
 kubernetes/**/secrets.yaml
+logs/
