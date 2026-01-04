@@ -38,11 +38,11 @@ docker compose up
 This will:
 
 Build the app container and a Traefik reverse proxy
-Serve the app at http://voice-agent.localhost:8081 (or whichever domain you configure)
+Serve the app at http://voice-agent.localhost:<port> (or whichever domain and port you configure)
 To access the app, open your browser and go to:
 
 ```
-http://voice-agent.localhost:8081
+http://voice-agent.localhost:8080
 ```
 
 - Allow microphone access when prompted.
