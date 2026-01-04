@@ -4,7 +4,31 @@ import * as http from 'http';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as dotenv from 'dotenv';
+import winston from 'winston';
 
+const logDir = '/var/log/voice-agent';
+
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir, { recursive: true });
+}
+
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.printf(
+      ({ timestamp, level, message }) => `${timestamp} [${level.toUpperCase()}] ${message}`
+    )
+  ),
+  transports: [
+    new winston.transports.File({ filename: `${logDir}/error.log`, level: 'error' }),
+    new winston.transports.File({ filename: `${logDir}/combined.log` })
+  ]
+});
+
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new winston.transports.Console());
+}
 function bufferToArrayBuffer(buffer: Buffer): ArrayBufferLike {
   return buffer.buffer.slice(
     buffer.byteOffset,
@@ -50,10 +74,14 @@ async function connectToAgent() {
     // Set up event handlers
     agent.on(AgentEvents.Open, () => {
       console.log('Agent connection established');
+      logger.info('Agent connection established');
+
     });
 
     agent.on('Welcome', (data) => {
       console.log('Server welcome message:', data);
+      logger.info('Server welcome message:', data);
+
       agent.configure({
         audio: {
           input: {
@@ -102,6 +130,8 @@ Remember that you have a voice interface. You can listen and speak, and all your
 
     agent.on('SettingsApplied', (data) => {
       console.log('Server confirmed settings:', data);
+      logger.info('Server confirmed settings:', data);
+
     });
 
     agent.on(AgentEvents.AgentStartedSpeaking, (data: { total_latency: number }) => {
@@ -111,6 +141,8 @@ Remember that you have a voice interface. You can listen and speak, and all your
     agent.on(AgentEvents.ConversationText, (message: { role: string; content: string }) => {
       // Only log the conversation text for debugging
       console.log(`${message.role}: ${message.content}`);
+      logger.info(`${message.role}: ${message.content}`);
+
     });
 
     agent.on(AgentEvents.Audio, (audio: Buffer) => {
@@ -132,6 +164,8 @@ Remember that you have a voice interface. You can listen and speak, and all your
 
     agent.on(AgentEvents.Close, () => {
       console.log('Agent connection closed');
+      logger.info('Agent connection closed');
+
       if (browserWs?.readyState === WebSocket.OPEN) {
         browserWs.close();
       }
@@ -151,6 +185,8 @@ let browserWs: WebSocket | null = null;
 wss.on('connection', async (ws) => {
   // Only log critical connection events
   console.log('Browser client connected');
+  logger.info('Browser client connected');
+
   browserWs = ws;
 
   const agent = await connectToAgent();
@@ -173,10 +209,14 @@ wss.on('connection', async (ws) => {
     }
     browserWs = null;
     console.log('Browser client disconnected');
+    logger.info('Browser client disconnected');
+
   });
 
   ws.on('error', (error) => {
     console.error('WebSocket error:', error);
+    logger.info('WebSocket error:', error);
+
   });
 });
 
@@ -194,6 +234,8 @@ function shutdown() {
   // Set a timeout to force exit if graceful shutdown takes too long
   const forceExit = setTimeout(() => {
     console.error('Force closing due to timeout');
+    logger.info('Force closing due to timeout');
+
     process.exit(1);
   }, 5000);
 
@@ -208,6 +250,8 @@ function shutdown() {
     if (!pendingOps.ws && !pendingOps.http) {
       clearTimeout(forceExit);
       console.log('Server shutdown complete');
+      logger.info('Server shutdown complete');
+
       process.exit(0);
     }
   };
@@ -218,6 +262,8 @@ function shutdown() {
       client.close();
     } catch (err) {
       console.error('Error closing WebSocket client:', err);
+      logger.info('Error closing WebSocket client:', err);
+
     }
   });
 
