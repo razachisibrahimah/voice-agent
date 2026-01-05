@@ -36,4 +36,6 @@ spec:
           configMap:
             name: traefik-config
         - name: traefik-logs
-          emptyDir: {}  # Temporary in-memory storage for logs
+          persistentVolumeClaim:
+            claimName: traefik-logs-pvc
+       

@@ -52,6 +52,7 @@ dist/
 
 # Kubernetes secrets
 kubernetes/secret.yaml
+kubernetes/voice-agent-secret.yaml
 kubernetes/*.secret.yaml
 kubernetes/**/secret.yaml
 kubernetes/**/secrets.yaml

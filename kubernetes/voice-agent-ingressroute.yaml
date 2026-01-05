@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`voice.localhost`)
+    - match: Host(`voice-agent.localhost`)
       kind: Rule
       services:
         - name: voice-agent-svc

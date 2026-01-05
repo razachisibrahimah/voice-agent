@@ -4,7 +4,7 @@ metadata:
   name: voice-agent
   namespace: voice-agent
 spec:
-  replicas: 3  # Run multiple pods for load balancing and zero-downtime updates
+  replicas: 2  # Run multiple pods for load balancing and zero-downtime updates
 
   strategy:
     type: RollingUpdate  # Use rolling updates for safe deployment
@@ -22,7 +22,7 @@ spec:
         app: voice-agent  # Pod label for service targeting and routing
 
     spec:
-      terminationGracePeriodSeconds: 180  # Allow 3 minutes for graceful shutdown (in-flight calls, etc.)
+      terminationGracePeriodSeconds: 300  # Graceful shutdown (in-flight calls, etc.)
 
       containers:
         - name: voice-agent
@@ -57,4 +57,12 @@ spec:
           lifecycle:
             preStop:
               exec:
-                command: ["sh", "-c", "sleep 60"]
+                command: ["sh", "-c", "sleep 300"]
+
+      #     volumeMounts:
+      #       - name: voice-agent-logs
+      #         mountPath: /var/log/voice-agent
+      # volumes:
+      #   - name: voice-agent-logs
+      #     persistentVolumeClaim:
+      #       claimName: voice-agent-logs-pvc

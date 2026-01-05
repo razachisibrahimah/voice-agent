@@ -1,0 +1,39 @@
+# Dashboard
+api:
+  dashboard: true
+  insecure: true
+
+# Logs
+logs:
+  access:
+    enabled: true
+    format: json
+    filePath: "/var/log/traefik/access.log"
+  general:
+    level: INFO
+    filePath: "/var/log/traefik/traefik.log"
+
+# Metrics
+metrics:
+  prometheus:
+    enabled: true
+    entryPoint: metrics
+    service:
+      enabled: true
+
+# Providers
+providers:
+  kubernetesCRD: {}
+  kubernetesIngress: {}
+
+# Mount PVC for logs
+deployment:
+  extraVolumes:
+    - name: traefik-logs
+      persistentVolumeClaim:
+        claimName: traefik-logs-pvc
+
+  extraVolumeMounts:
+    - name: traefik-logs
+      mountPath: /var/log/traefik
+      readOnly: false

@@ -15,7 +15,7 @@ if (!fs.existsSync(logDir)) {
 const logger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(
-    winston.format.timestamp(),
+    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     winston.format.printf(
       ({ timestamp, level, message }) => `${timestamp} [${level.toUpperCase()}] ${message}`
     )
@@ -27,8 +27,18 @@ const logger = winston.createLogger({
 });
 
 if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console());
+  logger.add(new winston.transports.Console({
+    format: winston.format.combine(
+      winston.format.colorize(),
+      winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+      winston.format.printf(({ timestamp, level, message }) =>
+        `${timestamp} [${level}]: ${message}`
+      )
+    )
+  }));
 }
+
+
 function bufferToArrayBuffer(buffer: Buffer): ArrayBufferLike {
   return buffer.buffer.slice(
     buffer.byteOffset,

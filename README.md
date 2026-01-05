@@ -38,7 +38,7 @@ docker compose up
 This will:
 
 Build the app container and a Traefik reverse proxy
-Serve the app at http://voice-agent.localhost:<port> (or whichever domain and port you configure)
+Serve the app at http://voice-agent.localhost:8080 (or whichever domain and port you configure)
 To access the app, open your browser and go to:
 
 ```
@@ -48,6 +48,96 @@ http://voice-agent.localhost:8080
 - Allow microphone access when prompted.
 - Speak into your microphone to interact with the Deepgram Voice Agent.
 - You should hear the agent's responses played back in your browser.
+
+### Run the application with Kubernetes
+
+Local Kubernetes Setup (Minikube)
+
+This guide helps developers spin up your Voice Agent app locally using Minikube, including Traefik as an ingress controller, deploying the app, and tailing logs.
+
+## Prerequisites
+
+- Make sure you have these installed:
+
+- Docker (for building images)
+
+- kubectl (Kubernetes CLI)
+
+- Minikube (local Kubernetes cluster)
+
+- Helm (for Traefik; optional if using manifest files)
+
+Start Minikube using Docker as the driver:
+
+```bash
+minikube start --driver=docker
+```
+
+ Verify it’s running with the following command:
+
+ ```bash
+ minikube status
+```
+
+Add Traefik Helm Repo
+
+```bash
+helm repo add traefik https://traefik.github.io/charts
+helm repo update
+```
+
+Install Traefik via Helm
+
+```bash
+helm install traefik traefik/traefik \
+  --namespace voice-agent --create-namespace \
+  --values ./traefik-helm-values.yaml
+```
+
+Start Minikube Tunnel (for LoadBalancer access)
+This essential if you're using a LoadBalancer service type (as Traefik does by default when installed via Helm). It creates a network route on your machine so that services exposed via LoadBalancer become accessible at 127.0.0.1.
+
+```bash
+sudo minikube tunnel
+```
+
+```bash
+kubectl apply -f kubernetes/voice-agent-namespace.yaml
+
+kubectl apply -f kubernetes/voice-agent-secret.yaml
+
+kubectl apply -f kubernetes/voice-agent-configmap.yaml
+
+kubectl apply -f kubernetes/voice-agent-logs-pv.yaml
+
+kubectl apply -f kubernetes/voice-agent-logs-pvc.yaml
+
+kubectl apply -f kubernetes/voice-agent-deployment.yaml
+
+kubectl apply -f kubernetes/voice-agent-service.yaml
+
+kubectl apply -f kubernetes/voice-agent-ingressroute.yaml
+```
+
+Access the App
+
+Add to your /etc/hosts file:
+
+```
+127.0.0.1 voice-agent.localhost
+```
+
+Then access on your browser
+
+```
+http://voice-agent.localhost
+```
+
+Useful Scripts
+
+tail-voice-agent-logs.sh – Tail logs from all voice-agent pods
+
+inspect-voice-agent-rollout.sh – Check which pods are active vs being terminated during rollouts
 
 ## Using Cursor & MDC Rules
 

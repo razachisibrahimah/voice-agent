@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: traefik-logs-pv
+spec:
+  capacity:
+    storage: 100Mi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /data  # Local path on the node (for Minikube/demo use)
+    type: DirectoryOrCreate
+  persistentVolumeReclaimPolicy: Retain
