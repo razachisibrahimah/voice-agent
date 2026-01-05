@@ -11,31 +11,24 @@ spec:
     rollingUpdate:
       maxUnavailable: 0  # Ensure at least all existing pods remain during rollout
       maxSurge: 1         # Allow one extra pod temporarily during rollout
-
   selector:
     matchLabels:
       app: voice-agent  # Selector to match pod labels
-
   template:
     metadata:
       labels:
         app: voice-agent  # Pod label for service targeting and routing
-
     spec:
       terminationGracePeriodSeconds: 300  # Graceful shutdown (in-flight calls, etc.)
-
       containers:
         - name: voice-agent
           image: razachis1/voice-agent:latest  # Latest image from your registry
           imagePullPolicy: Always  # Always pull the latest image for each deployment
-
           ports:
             - containerPort: 3000  # Expose app’s internal port
-
           envFrom:
             - secretRef:
                 name: voice-agent-secrets  # Inject secrets (e.g. API keys)
-
           # Use TCP readiness probe to check if port is open
           # Avoids interference with long-lived WebSocket/audio traffic
           readinessProbe:
@@ -43,7 +36,6 @@ spec:
               port: 3000
             initialDelaySeconds: 5  # Wait 5s before first check
             periodSeconds: 10       # Check every 10s
-
           #  Use TCP liveness probe to detect crashed pods
           # Ensures pod is killed only if truly dead, not just slow
           livenessProbe:

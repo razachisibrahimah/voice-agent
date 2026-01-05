@@ -6,6 +6,7 @@ metadata:
 spec:
   selector:
     app: voice-agent
+    role: blue
   ports:
     - protocol: TCP
       port: 80
