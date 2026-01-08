@@ -79,6 +79,10 @@ minikube start --driver=docker
  minikube status
 ```
 
+ Rename  `voice-agent-secret.example.yaml` to `voice-agent-secret.yaml` and enter your API key you generated in the [Deepgram Console](https://console.deepgram.com/).
+
+`brew install helm`
+
 Add Traefik Helm Repo
 
 ```bash
@@ -138,6 +142,10 @@ Useful Scripts
 tail-voice-agent-logs.sh – Tail logs from all voice-agent pods
 
 inspect-voice-agent-rollout.sh – Check which pods are active vs being terminated during rollouts
+
+./switch-and-scale.sh blue green
+# Or to switch back
+./switch-and-scale.sh green blue
 
 ## Using Cursor & MDC Rules
 
