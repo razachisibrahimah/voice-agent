@@ -112,11 +112,7 @@ kubectl apply -f kubernetes/voice-agent-secret.yaml
 
 kubectl apply -f kubernetes/voice-agent-configmap.yaml
 
-kubectl apply -f kubernetes/voice-agent-logs-pv.yaml
-
-kubectl apply -f kubernetes/voice-agent-logs-pvc.yaml
-
-kubectl apply -f kubernetes/voice-agent-deployment.yaml
+kubectl apply -f kubernetes/voice-agent-blue-deployment.yaml
 
 kubectl apply -f kubernetes/voice-agent-service.yaml
 
