@@ -143,6 +143,36 @@ inspect-voice-agent-rollout.sh – Check which pods are active vs being terminat
 # Or to switch back
 ./switch-and-scale.sh green blue
 
+## Useful Commands
+
+ It keeps the command running and continuously updates the output in real-time as the state of the pods in the voice-agent namespace changes.
+```bash
+kubectl get pods -n voice-agent -w
+```
+
+```bash
+kubectl get pods           # Only shows pods in current namespace
+kubectl get pods -A        # Shows pods in ALL namespaces
+kubectl rollout restart deployment voice-agent-blue -n voice-agent
+kubectl get endpoints voice-agent -n voice-agent -o wide
+kubectl delete pod -n voice-agent --field-selector=status.phase=Succeeded
+```
+
+```bash
+kubectl patch service voice-agent-svc -n voice-agent \
+  --type=json -p='[
+    {"op": "replace", "path": "/spec/selector/role", "value": "blue"}
+  ]'
+```
+```bash
+kubectl rollout restart deployment voice-agent-blue -n voice-agent
+```
+
+ You can verify live traffic routed to the blue pods this by checking the service selector:
+
+```bash
+kubectl get svc voice-agent-svc -n voice-agent -o jsonpath='{.spec.selector}'
+```
 ## Using Cursor & MDC Rules
 
 This application can be modify as needed by using the [app-requirements.mdc](.cursor/rules/app-requirements.mdc) file. This file allows you to specify various settings and parameters for the application in a structured format that can be use along with [Cursor's](https://www.cursor.com/) AI Powered Code Editor.
