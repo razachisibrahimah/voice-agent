@@ -18,7 +18,7 @@ spec:
       terminationGracePeriodSeconds: 400
       containers:
         - name: voice-agent
-          image: razachis1/voice-agent:latest
+          image: razachis1/voice-agent:1.0.0
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
